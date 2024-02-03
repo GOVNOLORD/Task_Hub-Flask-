@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width initial-scale=1.0">
+    <title>View Task</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="header">
+        <h1>Task Details</h1>
+        <a href="/">Back to project</a>
+    </div>
+
+    <div class="task-details">
+        <h2>{{ task.title }}</h2>
+        <p><strong>Description: </strong> {{ task.description }} </p>
+        <p><strong>Deadline: </strong> {{ task.deadline }} </p>
+        <p><strong>Assigned to: </strong> {{ task.assigned_to.username }} </p>
+
+        <h3>Comments</h3>
+        <ul>
+            {% for comment in task.comments %}
+            <li> {{ comment.task }} </li>
+            {% endfor %}
+        </ul>
+    </div>
+</body>
+</html>

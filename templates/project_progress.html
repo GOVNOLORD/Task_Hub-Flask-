@@ -1,0 +1,6 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>{{  project.name }} Progress </h1>
+    <div>{{ graph_html | safe }}</div>
+{% endblock %}

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width initial-scale=1.0">
+    <title>Create Project</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="header">
+        <h1>Create Project</h1>
+        <a href="/">Back to Dashboard</a>
+    </div>
+
+    <div class="create-project-form">
+        <form action="/create_project" method="post">
+            <div class="form-group">
+                <lable for="project_name">Project name: </lable>
+                <input type="text" id="project_name" name="project_name" required>
+            </div>
+
+            <button type="submit">Create project</button>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name = "viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Your app {% endblock %}</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.js"></script>
+</head>
+<body>
+    <script>
+        var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+        socket.on('connect', function(){
+            console.log('WebSocket connected');
+        });
+
+        socket.on('new_task_notification', function(data){
+            alert('New task in project: ' + data.task_title);
+        });
+    </script>
+</body>
+</html>
