@@ -1,14 +1,12 @@
+from flask import Flask
 from api import api_bp
-from flask_principal import Permission, RoleNeed
 from flask_socketio import emit
 from extensions import app, login_manager, socketio
 from models import User
+from routes import progress
 
 app.register_blueprint(api_bp)
-
-admin_permission = Permission(RoleNeed('admin'))
-project_manager_permission = Permission(RoleNeed('project_manager'))
-project_member_permission = Permission(RoleNeed('project_member'))
+app.register_blueprint(progress)
 
 
 @login_manager.user_loader
