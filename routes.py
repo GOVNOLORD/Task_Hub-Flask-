@@ -1,11 +1,10 @@
-from flask import Blueprint
-from plotly.subplots import make_subplots
-import plotly.graph_objects as go
+from flask import Blueprint, render_template, redirect, url_for, flash, request
+from flask_login import login_user, login_required, logout_user, current_user
+from extensions import db, socketio, app
 from models import Project, Task, User, Comment
 from permissions import project_manager_permission, admin_permission, project_member_permission
-from flask import render_template, redirect, url_for, flash, request
-from flask_login import login_user, login_required, logout_user, current_user
-from extensions import db, app, socketio
+from plotly.subplots import make_subplots
+import plotly.graph_objects as go
 
 progress = Blueprint('progress', __name__)
 
@@ -43,7 +42,7 @@ def project_progress(project_id):
     return render_template('project_progress.html', project=project, graph_html=graph_html)
 
 
-@app.route('/create_task/<int:project_id>', methods=['GET', 'POST'])
+@progress.route('/create_task/<int:project_id>', methods=['GET', 'POST'])
 @login_required
 @project_member_permission.require(http_exception=403)
 def create_task(project_id):
@@ -67,7 +66,7 @@ def create_task(project_id):
     return redirect(url_for('project', project_id=project.id))
 
 
-@app.route('/task/<int:task_id>')
+@progress.route('/task/<int:task_id>')
 @login_required
 @project_manager_permission.require(http_exception=403)
 def view_task(task_id):
@@ -75,7 +74,7 @@ def view_task(task_id):
     return render_template('view_task.html', task=task)
 
 
-@app.route('/add_comment/<int:task_id>', methods=['POST'])
+@progress.route('/add_comment/<int:task_id>', methods=['POST'])
 @login_required
 @project_manager_permission.require(http_exception=403)
 def add_comment(task_id):
@@ -94,7 +93,7 @@ def add_comment(task_id):
 
 @app.route('/create_project', methods=['GET', 'POST'])
 @login_required
-@project_manager_permission.require(http_exception=403)
+@admin_permission.require(http_exception=403)
 def create_project():
     if request.method == 'POST':
         project_name = request.form['project_name']
@@ -122,6 +121,7 @@ def manage_participants(project_id):
             flash(f'Participant {participant_username} added to the project!', 'success')
         else:
             flash(f'User {participant_username} not found!', 'danger')
+    return render_template('manage_participants.html', project=project)
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -129,7 +129,8 @@ def register():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        new_user = User.query.fillter_by(username=username, password=password).first()
+        role = request.form['role']
+        new_user = User(username=username, password=password, role=role)
         db.session.add(new_user)
         db.session.commit()
         flash('Your account has been created!', 'success')
@@ -142,7 +143,7 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        user = User.query.fillter_by(username=username).first()
+        user = User.query.filter_by(username=username).first()
         if user and user.password == password:
             login_user(user)
             flash('Login successful', 'success')
@@ -171,3 +172,19 @@ def dashboard():
 @login_required
 def admin():
     return render_template('admin.html')
+
+
+@app.route('/change_role/<int:user_id>', methods=['POST'])
+@login_required
+def change_role(user_id):
+    if not current_user.is_admin:
+        flash('You do not have permission')
+        return redirect(url_for('admin'))
+
+    user = User.query.get_or_404(user_id)
+    new_role = request.form['new_role']
+    user.role = new_role
+    db.session.commit()
+
+    flash(f'Role for user {user.username} has been changed to {new_role}', 'success')
+    return redirect(url_for('admin'))

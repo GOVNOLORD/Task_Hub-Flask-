@@ -15,6 +15,7 @@
     <div class="dashboard-content">
         <h2>Welcome, {{ current_user.username }}! </h2>
             <p>Your dashboard content goes here! </p>
+            <p>Don't have a project? Don't worry you can create it <a href="{{ url_for('create_project') }}"> here</a>.</p>
     </div>
 </body>
 </html>

@@ -1,12 +1,15 @@
-from flask import Flask
 from api import api_bp
 from flask_socketio import emit
-from extensions import app, login_manager, socketio
+from extensions import app, socketio, db
 from models import User
 from routes import progress
+from flask_login import LoginManager
 
 app.register_blueprint(api_bp)
 app.register_blueprint(progress)
+
+login_manager = LoginManager()
+login_manager.init_app(app)
 
 
 @login_manager.user_loader
@@ -27,6 +30,9 @@ def handle_new_comment_notification(data):
     task_title = data['task_title']
     emit('new_comment_notification', {'task_id': task_id, 'task_title': task_title}, broadcast=True)
 
+
+with app.app_context():
+    db.create_all()
 
 if __name__ == '__main__':
     socketio.run(app, debug=True)

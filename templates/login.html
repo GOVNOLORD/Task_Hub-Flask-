@@ -7,23 +7,23 @@
     <link rel="stylesheet" href="../static/style.css">
 </head>
 <body>
-    <div class="header">
-        <h1>Login</h1>
-        <a href="/register">Don't have an account? Register here!</a>
+<div class="header">
+    <h1>Login</h1>
+    <a href="/register">Don't have an account? Register here!</a>
+</div>
+
+<div class="login-form">
+    <form action="/login" method="post">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
+
+    <div class="form-group">
+        <label for="password">Password: </label>
+        <input type="password" id="password" name="password" required>
     </div>
 
-    <div class="login-form">
-        <form action="/login" method="post">
-            <lable for="username">Username: </lable>
-            <input type="text" id="username" name="username" required>
-        </form>
-
-        <div class="form-group">
-            <label for="password">Password: </label>
-            <input type="password" id="password" name="password" required>
-        </div>
-
-        <button type="submit">Login</button>
-    </div>
+    <button type="submit">Login</button>
+    </form>
+</div>
 </body>
 </html>

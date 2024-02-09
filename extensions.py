@@ -5,8 +5,8 @@ from flask_principal import Principal
 from flask_socketio import SocketIO
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'your_secret_key'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:postgres@postgres:5432/postgres'
+app.config['SECRET_KEY'] = '12345678'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:postgres@localhost:5432/postgres'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 socketio = SocketIO(app)
 db = SQLAlchemy(app)

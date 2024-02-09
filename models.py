@@ -6,7 +6,7 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), unique=True, nullable=False)
     password = db.Column(db.String(20), nullable=False)
-    role = db.Column(db.String(20), nullable=False, default='user')
+    role = db.Column(db.String(20), nullable=False, default='project_manager')
 
 
 class Project(db.Model):
@@ -23,9 +23,9 @@ class Task(db.Model):
     title = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text)
     deadline = db.Column(db.DateTime)
-    assigned_to = db.Column(db.Integer, db.ForeignKey('user_id'))
-    assigned_user = db.relationship('User', backref='task_assigned', lazy=True)
-    project_id = db.Column(db.Integer, db.ForeignKey('project_id'), nullable=False)
+    assigned_to = db.Column(db.Integer, db.ForeignKey('user.id'))
+    assigned_user = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    project_id = db.Column(db.Integer, db.ForeignKey('project.id'), nullable=False)
     project = db.relationship('Project', backref='tasks', lazy=True)
     comments = db.relationship('Comment', backref='task', lazy=True)
 
@@ -33,7 +33,7 @@ class Task(db.Model):
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     text = db.Column(db.Text, nullable=False)
-    task_id = db.Column(db.Integer, db.ForeignKey('task_id'), nullable=False)
+    task_id = db.Column(db.Integer, db.ForeignKey('task.id'), nullable=False)
 
 
 project_participants = db.Table('project_participants',
