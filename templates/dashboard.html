@@ -2,25 +2,20 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width initial-scale=1.0">
-    <title>Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../static/style.css">
+    <title>Dashboard</title>
 </head>
 <body>
-    <div class="header">
-        <h1>Dashboard</h1>
-        <a href="/logout">Logout</a>
-    </div>
-
-    <div class="dashboard-content">
-        <h2>Welcome, {{ current_user.username }}! </h2>
-            <p>Your dashboard content goes here! </p>
-            <ul>
-                {% for project in projects %}
-                <li>{{ project.name }}</li>
-                {% endfor %}
-            </ul>
-            <p>Don't have a project? Don't worry you can create it <a href="{{ url_for('create_project') }}"> here</a>.</p>
+    <h1 class="dashboard">Dashboard</h1>
+    <div class="project-container">
+        {% for project in projects %}
+        <div class="project">
+            <h3>{{ project.name }}</h3>
+            <p>Project Manager: {{ project.manager.username }}</p>
+            <p><a href="{{ url_for('project_page', project_id=project.id) }}">View Project</a></p>
+        </div>
+        {% endfor %}
     </div>
 </body>
 </html>

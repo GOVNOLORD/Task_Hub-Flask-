@@ -184,3 +184,38 @@ th {
 button:hover {
     background-color: #45a049;
 }
+
+.project-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.project {
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+}
+.project h3 {
+    color: #333;
+    margin-bottom: 5px;
+}
+.project p {
+    color: #666;
+    margin-bottom: 10px;
+}
+.project a {
+    color: #007bff;
+    text-decoration: none;
+}
+.project a:hover {
+    text-decoration: underline;
+}
+
+.dashboard {
+    color: #333;
+    text-align: center;
+    margin-top: 50px;
+}

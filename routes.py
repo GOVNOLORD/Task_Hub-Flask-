@@ -42,30 +42,6 @@ def project_progress(project_id):
     return render_template('project_progress.html', project=project, graph_html=graph_html)
 
 
-@progress.route('/create_task/<int:project_id>', methods=['GET', 'POST'])
-@login_required
-@project_member_permission.require(http_exception=403)
-def create_task(project_id):
-    project = Project.query.get_or_404(project_id)
-
-    if request.method == 'POST':
-        title = request.form['title']
-        description = request.form['description']
-        deadline = request.form['deadline']
-        assigned_to = request.form['assigned_to']
-
-        new_task = Task(title=title, description=description, deadline=deadline, assigned_to=assigned_to,
-                        project=project)
-        db.session.add(new_task)
-        db.session.commit()
-        flash('New task created!', 'success')
-        return redirect(url_for('project', project_id=project.id))
-
-    socketio.emit('new_task_notification', {'project_id': project_id, 'project_name': project.name}, namespace='/')
-
-    return redirect(url_for('project', project_id=project.id))
-
-
 @progress.route('/task/<int:task_id>')
 @login_required
 @project_manager_permission.require(http_exception=403)
@@ -93,7 +69,7 @@ def add_comment(task_id):
 
 @app.route('/create_project', methods=['GET', 'POST'])
 @login_required
-#@project_manager_permission.require(http_exception=403)
+# @project_manager_permission.require(http_exception=403)
 def create_project():
     if current_user.role == 'project_manager' or 'admin':
         if request.method == 'POST':
@@ -169,7 +145,7 @@ def logout():
 @login_required
 def dashboard():
     projects = Project.query.all()
-    return render_template('dashboard.html')
+    return render_template('dashboard.html', projects=projects)
 
 
 @app.route('/admin')
@@ -193,3 +169,41 @@ def change_role(user_id):
 
     flash(f'Role for user {user.username} has been changed to {new_role}', 'success')
     return redirect(url_for('admin'))
+
+
+@app.route('/project/<int:project_id>', methods=['GET', 'POST'])
+@login_required
+def project_page(project_id):
+    project = Project.query.get_or_404(project_id)
+    if request.method == 'POST':
+        new_description = request.form['description']
+        project.description = new_description
+        db.session.commit()
+        flash('Project description has been updated', 'success')
+        return redirect(url_for('project_page', project_id=project_id))
+    return render_template('project_page.html', project=project)
+
+@app.route('/create_task/<int:project_id>', methods=['POST'])
+@login_required
+def create_task(project_id):
+    project = Project.query.get_or_404(project_id)
+    title = request.form['title']
+    description = request.form['description']
+    deadline = request.form['deadline']
+    assigned_to = request.form['assigned_to']
+    new_task = Task(title=title, description=description, deadline=deadline, assigned_to=assigned_to, project=project)
+    db.session.add(new_task)
+    db.session.commit()
+    flash('New task has been created', 'success')
+    return redirect(url_for('project_page', project_id=project_id))
+
+@app.route('/update_project_description/<int:project_id>', methods=['POST'])
+@login_required
+def update_project_description(project_id):
+    project = Project.query.get_or_404(project_id)
+    if request.method == 'POST':
+        new_description = request.form['new_description']
+        project.description = new_description
+        db.session.commit()
+        flash('Project description has been updated', 'success')
+        return redirect(url_for('project_page', project_id=project_id))

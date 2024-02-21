@@ -7,23 +7,30 @@
     <link rel="stylesheet" href="../static/style.css">
 </head>
 <body>
-    <div class="header">
-        <h1>Project Name</h1>
-        <a href="/">Back to Dashboard</a>
+    <h1>{{ project.name }}</h1>
+    <div class="project-description">
+        <h2>Description</h2>
+        <form action="{{ url_for('update_project_description', project_id=project.id) }}" method="post">
+            <textarea name="description" rows="4" cols="50">{{ project.description }}</textarea>
+            <button type="submit">Save</button>
+        </form>
     </div>
 
-    <div class="project-details">
-        <h2>Project Details</h2>
-        <p>Description: Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-        <p>Manager: Jhon Doe</p>
-    </div>
-
-    <div class="tasks">
-        <h2>Project Tasks</h2>
+    <div class="task-list">
+        <h2>Task</h2>
         <ul>
-            <li><a href="/task/1">Task 1</a></li>
-            <li><a href="/task/2">Task 2</a> </li>
+            {% for task in project.tasks %}
+            <li>{{ task.title }}</li>
+            {% endfor %}
         </ul>
+    <h3>Create New Task</h3>
+    <form action="{{ url_for('create_task', project_id=project.id) }}" method="post">
+        <input type="text" name="title" placeholder="Task Title" required>
+        <textarea name="description" placeholder="Task Description" required></textarea>
+        <input type="date" name="deadline" required>
+        <input type="text" name="assigned_to" placeholder="Assigned To" required>
+        <button type="submit">Create Task</button>
+    </form>
     </div>
 </body>
 </html>
