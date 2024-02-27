@@ -2,35 +2,23 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport", content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Project Page</title>
     <link rel="stylesheet" href="../static/style.css">
 </head>
 <body>
-    <h1>{{ project.name }}</h1>
-    <div class="project-description">
-        <h2>Description</h2>
-        <form action="{{ url_for('update_project_description', project_id=project.id) }}" method="post">
-            <textarea name="description" rows="4" cols="50">{{ project.description }}</textarea>
-            <button type="submit">Save</button>
-        </form>
-    </div>
+    <h1>Project Details</h1>
+    <p><strong>Name:</strong> {{ project.name }}</p>
+    <p><strong>Description:</strong> {{ project.description }}</p>
+    <p><strong>Manager:</strong> {{ project.manager.username }}</p>
 
-    <div class="task-list">
-        <h2>Task</h2>
-        <ul>
-            {% for task in project.tasks %}
-            <li>{{ task.title }}</li>
-            {% endfor %}
-        </ul>
-    <h3>Create New Task</h3>
-    <form action="{{ url_for('create_task', project_id=project.id) }}" method="post">
-        <input type="text" name="title" placeholder="Task Title" required>
-        <textarea name="description" placeholder="Task Description" required></textarea>
-        <input type="date" name="deadline" required>
-        <input type="text" name="assigned_to" placeholder="Assigned To" required>
-        <button type="submit">Create Task</button>
-    </form>
-    </div>
+    <h2>Tasks:</h2>
+    <ul>
+        {% for task in tasks %}
+            <li><a href="{{ url_for('view_task', task_id=task.id) }}">{{ task.title }}</a> </li>
+        {% endfor %}
+    </ul>
+
+    <a href="{{ url_for('create_task', project_id=project.id) }}">Create Task</a>
 </body>
 </html>

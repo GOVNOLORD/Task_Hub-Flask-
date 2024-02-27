@@ -175,35 +175,38 @@ def change_role(user_id):
 @login_required
 def project_page(project_id):
     project = Project.query.get_or_404(project_id)
+    tasks = Task.query.filter_by(project_id=project_id).all()
     if request.method == 'POST':
         new_description = request.form['description']
         project.description = new_description
         db.session.commit()
         flash('Project description has been updated', 'success')
         return redirect(url_for('project_page', project_id=project_id))
-    return render_template('project_page.html', project=project)
+    return render_template('project_page.html', project=project, project_id=project_id, tasks=tasks)
 
-@app.route('/create_task/<int:project_id>', methods=['POST'])
+
+@app.route('/create_task/<int:project_id>', methods=['GET', 'POST'])
 @login_required
 def create_task(project_id):
-    project = Project.query.get_or_404(project_id)
-    title = request.form['title']
-    description = request.form['description']
-    deadline = request.form['deadline']
-    assigned_to = request.form['assigned_to']
-    new_task = Task(title=title, description=description, deadline=deadline, assigned_to=assigned_to, project=project)
-    db.session.add(new_task)
-    db.session.commit()
-    flash('New task has been created', 'success')
-    return redirect(url_for('project_page', project_id=project_id))
-
-@app.route('/update_project_description/<int:project_id>', methods=['POST'])
-@login_required
-def update_project_description(project_id):
-    project = Project.query.get_or_404(project_id)
     if request.method == 'POST':
-        new_description = request.form['new_description']
-        project.description = new_description
+        title = request.form['title']
+        description = request.form['description']
+        deadline = request.form['deadline']
+
+        new_task = Task(title=title, description=description, deadline=deadline, project_id=project_id)
+
+        db.session.add(new_task)
         db.session.commit()
-        flash('Project description has been updated', 'success')
+
+        flash('Task created successfully!', 'success')
+
         return redirect(url_for('project_page', project_id=project_id))
+    else:
+        return render_template('create_task.html', project_id=project_id)
+
+
+@app.route('/view_task/<int:task_id>')
+@login_required
+def view_task(task_id):
+    task = Task.query.get_or_404(task_id)
+    return render_template('view_task.html', task=task)

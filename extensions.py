@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_principal import Principal
 from flask_socketio import SocketIO
+from flask_migrate import Migrate
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '12345678'
@@ -10,5 +11,6 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:postgres
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 socketio = SocketIO(app)
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 login_manager = LoginManager(app)
 principal = Principal(app)

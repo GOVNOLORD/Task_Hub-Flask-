@@ -23,8 +23,6 @@ class Task(db.Model):
     title = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text)
     deadline = db.Column(db.DateTime)
-    assigned_to = db.Column(db.Integer, db.ForeignKey('user.id'))
-    assigned_user = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     project_id = db.Column(db.Integer, db.ForeignKey('project.id'), nullable=False)
     project = db.relationship('Project', backref='tasks', lazy=True)
     comments = db.relationship('Comment', backref='task', lazy=True)

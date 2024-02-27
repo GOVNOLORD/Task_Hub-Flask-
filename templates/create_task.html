@@ -9,33 +9,26 @@
 <body>
     <div class="header">
         <h1>Create Task</h1>
-        <a href="/">Back to project</a>
     </div>
 
     <div class="create-task-form">
-        <from action="/create_task" method="post">
+        <form action="/create_task/{{ project_id }}" method="post">
             <div class="from-group">
-                <lable for="title">Task Title</lable>
+                <label for="title">Task Title</label>
                 <input type="text" id="title" name="title" required>
             </div>
 
             <div class="form-group">
-                <lable for="description">Task description:</lable>
+                <label for="description">Task description:</label>
                 <textarea id="description" name="description" required></textarea>
             </div>
 
             <div class="form-group">
-                <lable for="deadline">Deadline: </lable>
-                <input type="data" id="deadline" name="deadline" required>
+                <label for="deadline">Deadline: </label>
+                <input type="date" id="deadline" name="deadline" required>
             </div>
-
-            <div class="form-group">
-                <lable for="assigned_to">Assigned to: </lable>
-                <input type="text" id="assigned_to" name="assigned_to" required>
-            </div>
-
             <button type="submit">Create Task </button>
-        </from>
+        </form>
     </div>
 </body>
 </html>
