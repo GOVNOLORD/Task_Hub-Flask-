@@ -7,18 +7,22 @@
     <link rel="stylesheet" href="../static/style.css">
 </head>
 <body>
+    <div class="header">
     <h1>Project Details</h1>
+        <a href="{{ url_for('dashboard', project_id=project.id) }}">Back to dashboard</a>
+    </div>
+    <div class="project-info">
     <p><strong>Name:</strong> {{ project.name }}</p>
     <p><strong>Description:</strong> {{ project.description }}</p>
     <p><strong>Manager:</strong> {{ project.manager.username }}</p>
-
+    </div>
     <h2>Tasks:</h2>
-    <ul>
+    <ul class="task-list">
         {% for task in tasks %}
-            <li><a href="{{ url_for('view_task', task_id=task.id) }}">{{ task.title }}</a> </li>
+            <li class="task-item"><a href="{{ url_for('view_task', task_id=task.id) }}">{{ task.title }}</a> </li>
         {% endfor %}
     </ul>
 
-    <a href="{{ url_for('create_task', project_id=project.id) }}">Create Task</a>
+    <a href="{{ url_for('create_task', project_id=project.id) }}" class="create-task-link">Create Task</a>
 </body>
 </html>

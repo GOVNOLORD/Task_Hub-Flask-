@@ -1,45 +1,10 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_user, login_required, logout_user, current_user
-from extensions import db, socketio, app
-from models import Project, Task, User, Comment
-from permissions import project_manager_permission, admin_permission, project_member_permission
-from plotly.subplots import make_subplots
-import plotly.graph_objects as go
+from extensions import db, app
+from models import Project, Task, User
+from permissions import project_manager_permission, admin_permission
 
 progress = Blueprint('progress', __name__)
-
-
-@progress.route('/project_progress/<int:project_id>')
-@login_required
-@project_member_permission.require(http_exception=403)
-def project_progress(project_id):
-    project = Project.query.get_or_404(project_id)
-    tasks = Task.query.filter_by(project=project).all()
-
-    total_tasks = len(tasks)
-    completed_tasks = len([task for task in tasks if task.is_completed])
-    progress_percentage = (completed_tasks / total_tasks) * 100 if total_tasks > 0 else 0
-
-    fig = make_subplots(rows=1, cols=1, specs=[[{'type': 'indicator'}]])
-    fig.add_trace(go.Indicator(
-        mode="number+gauge",
-        value=progress_percentage,
-        domain={'row': 0, 'col': 0},
-        title={'text': f'Progress ({completed_tasks}/{total_tasks})'},
-        gauge={
-            'axis': {'range': [None, 100]},
-            'bar': {'color': "darkblue"},
-            'steps': [
-                {'range': [0, 25], 'color': "red"},
-                {'range': [25, 50], 'color': "orange"},
-                {'range': [50, 75], 'color': "yellow"},
-                {'range': [75, 100], 'color': "green"},
-            ],
-        }
-    ))
-
-    graph_html = fig.to_html(full_html=False)
-    return render_template('project_progress.html', project=project, graph_html=graph_html)
 
 
 @progress.route('/task/<int:task_id>')
@@ -48,23 +13,6 @@ def project_progress(project_id):
 def view_task(task_id):
     task = Task.query.get_or_404(task_id)
     return render_template('view_task.html', task=task)
-
-
-@progress.route('/add_comment/<int:task_id>', methods=['POST'])
-@login_required
-@project_manager_permission.require(http_exception=403)
-def add_comment(task_id):
-    task = Task.query.get_or_404(task_id)
-    text = request.form['comment_text']
-
-    new_comment = Comment(text=text, task=task)
-    db.session.add(new_comment)
-    db.session.commit()
-
-    flash('Comment added!', 'success')
-    socketio.emit('new_task_notification', {'project_id': task.project.id, 'project_name': task.project.name},
-                  namespace='/')
-    return redirect(url_for('view_task', task_id=task.id))
 
 
 @app.route('/create_project', methods=['GET', 'POST'])
@@ -83,25 +31,6 @@ def create_project():
     else:
         flash("You don't have a permission")
         return redirect('dashboard')
-
-
-@app.route('/manage_participants/<int:project_id>', methods=['GET', 'POST'])
-@login_required
-@project_manager_permission.require(http_exception=403)
-def manage_participants(project_id):
-    project = Project.query.get_or_404(project_id)
-
-    if request.method == 'POST':
-        participant_username = request.form['participant_username']
-        participant = User.query.filter_by(username=participant_username).first()
-
-        if participant:
-            project.participants.append(participant)
-            db.session.commit()
-            flash(f'Participant {participant_username} added to the project!', 'success')
-        else:
-            flash(f'User {participant_username} not found!', 'danger')
-    return render_template('manage_participants.html', project=project)
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -153,22 +82,6 @@ def dashboard():
 @login_required
 def admin():
     return render_template('admin.html')
-
-
-@app.route('/change_role/<int:user_id>', methods=['POST'])
-@login_required
-def change_role(user_id):
-    if not current_user.is_admin:
-        flash('You do not have permission')
-        return redirect(url_for('admin'))
-
-    user = User.query.get_or_404(user_id)
-    new_role = request.form['new_role']
-    user.role = new_role
-    db.session.commit()
-
-    flash(f'Role for user {user.username} has been changed to {new_role}', 'success')
-    return redirect(url_for('admin'))
 
 
 @app.route('/project/<int:project_id>', methods=['GET', 'POST'])

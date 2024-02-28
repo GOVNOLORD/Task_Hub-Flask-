@@ -7,7 +7,10 @@
     <title>Dashboard</title>
 </head>
 <body>
-    <h1 class="dashboard">Dashboard</h1>
+<div class="header">
+    <h1>Dashboard</h1>
+    <a href="{{ url_for('logout') }}">Logout</a>
+</div>
     <div class="project-container">
         {% for project in projects %}
         <div class="project">
