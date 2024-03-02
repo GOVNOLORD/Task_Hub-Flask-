@@ -17,20 +17,15 @@ def view_task(task_id):
 
 @app.route('/create_project', methods=['GET', 'POST'])
 @login_required
-# @project_manager_permission.require(http_exception=403)
 def create_project():
-    if current_user.role == 'project_manager' or 'admin':
-        if request.method == 'POST':
-            project_name = request.form['project_name']
-            new_project = Project(name=project_name, manager=current_user)
-            db.session.add(new_project)
-            db.session.commit()
-            flash('New project created successfully!', 'success')
-            return redirect(url_for('dashboard'))
-        return render_template('create_project.html')
-    else:
-        flash("You don't have a permission")
-        return redirect('dashboard')
+    if request.method == 'POST':
+        project_name = request.form['project_name']
+        new_project = Project(name=project_name, manager=current_user)
+        db.session.add(new_project)
+        db.session.commit()
+        flash('New project created successfully!', 'success')
+        return redirect(url_for('dashboard'))
+    return render_template('create_project.html')
 
 
 @app.route('/register', methods=['GET', 'POST'])

@@ -9,7 +9,8 @@
 <body>
 <div class="header">
     <h1>Dashboard</h1>
-    <a href="{{ url_for('logout') }}">Logout</a>
+    <a href="{{ url_for('create_project') }}">Create project</a><br>
+    <br><a href="{{ url_for('logout') }}">Logout</a>
 </div>
     <div class="project-container">
         {% for project in projects %}
