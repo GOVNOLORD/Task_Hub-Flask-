@@ -118,3 +118,4 @@ def create_task(project_id):
 def view_task(task_id):
     task = Task.query.get_or_404(task_id)
     return render_template('view_task.html', task=task)
+
